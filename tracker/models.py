@@ -15,7 +15,7 @@ class Employee(models.Model):
         verbose_name_plural = "Сотрудники"
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} ({self.position}) {self.email}"
+        return f"{self.full_name} ({self.position}) {self.email}"
 
 
 class Task(models.Model):
