@@ -4,8 +4,8 @@ from drf_spectacular.views import (SpectacularAPIView, SpectacularRedocView,
                                    SpectacularSwaggerView)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path("tracker/", include("tracker.urls", namespace="tracker")),
+    path("admin/", admin.site.urls),
+    path("", include("tracker.urls", namespace="tracker")),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
         "swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"

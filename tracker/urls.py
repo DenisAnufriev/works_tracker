@@ -8,11 +8,11 @@ app_name = TrackerConfig.name
 
 
 router = DefaultRouter()
-router.register(r'employees', EmployeeViewSet)
-router.register(r'tasks', TaskViewSet)
+router.register(r'employees', EmployeeViewSet, basename='employee')
+router.register(r'tasks', TaskViewSet, basename='task')
 
 urlpatterns = [
+    # path('', include(router.urls)),
     path('busy_employees/', BusyEmployeesView.as_view(), name='busy_employees'),
     path('important_tasks/', ImportantTasksView.as_view(), name='important_tasks'),
-
 ] + router.urls

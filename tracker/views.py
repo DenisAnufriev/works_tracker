@@ -20,6 +20,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 
 class BusyEmployeesView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = EmployeeSerializer
 
     def get(self, request):
         """
@@ -42,6 +43,7 @@ class BusyEmployeesView(APIView):
 
 class ImportantTasksView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = TaskSerializer
 
     def get(self, request):
         """
@@ -54,7 +56,7 @@ class ImportantTasksView(APIView):
         - Сортировка по наименее загруженному сотруднику
         """
         employees = Employee.objects.annotate(active_tasks=Count('tasks', filter=Q(tasks__status='in_progress')))
-        least_busy_employees = employees.order_by('active_tasks')  # наименее загруженные сотрудники
+        least_busy_employees = employees.order_by('active_tasks')
 
         """
         Для каждой важной задачи находим подходящего сотрудника
@@ -70,7 +72,7 @@ class ImportantTasksView(APIView):
 
             task_data.append({
                 'task': task.title,
-                'due_date': task.due_date,  # если есть поле с датой
+                'due_date': task.due_date,
                 'employees': potential_employees_names
             })
 
