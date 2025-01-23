@@ -10,7 +10,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    assigned_to = EmployeeSerializer()  # Вложенный сериализатор для сотрудника
+    assigned_to = EmployeeSerializer()
 
     class Meta:
         model = Task
