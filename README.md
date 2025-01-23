@@ -20,11 +20,11 @@ cp .env.example .env
 ### 2.1 Настройка переменных окружения
 
 # .env файл
-SECRET_KEY=секретный_ключ_для_Django
-DEBUG=True # Установите False в продакшене
-POSTGRES_USER=имя_пользователя_PostgreSQL
-POSTGRES_PASSWORD=пароль_для_PostgreSQL
-POSTGRES_DB=название_базы_данных
+- SECRET_KEY=секретный_ключ_для_Django
+- DEBUG=True # Установите False в продакшене
+- POSTGRES_USER=имя_пользователя_PostgreSQL
+- POSTGRES_PASSWORD=пароль_для_PostgreSQL
+- POSTGRES_DB=название_базы_данных
 
 ### 3. Сборка и запуск Docker-контейнеров
 Выполните следующую команду для сборки образов Docker:
@@ -46,7 +46,7 @@ docker exec -it django coverage run -m pytest
 docker exec -it django coverage report
 ```
 ### 4.1 Дополнительные шаги
-Если вы хотите, например, сгенерировать HTML-отчёт по покрытию, используйте:
+Если вы хотите сгенерировать HTML-отчёт по покрытию, используйте:
 ```bash
 docker exec -it django coverage html
 ```
@@ -76,18 +76,18 @@ docker exec -it django python manage.py migrate
 
 
 ### Структура проекта
-tracker/: Основное приложение, которое управляет задачами и сотрудниками.
-tracker/serializers.py: Сериализаторы для преобразования данных между моделями и JSON.
-tracker/views.py: Представления, обрабатывающие API-запросы.
-tracker/models.py: Модели для задач и сотрудников.
-tracker/tests.py: Тесты для API.
-docker-compose.yml: Конфигурация для Docker-контейнеров.
-Dockerfile: Конфигурация для сборки Docker-образа.
+- tracker/: Основное приложение, которое управляет задачами и сотрудниками.
+- tracker/serializers.py: Сериализаторы для преобразования данных между моделями и JSON.
+- tracker/views.py: Представления, обрабатывающие API-запросы.
+- tracker/models.py: Модели для задач и сотрудников.
+- tracker/tests.py: Тесты для API.
+- docker-compose.yml: Конфигурация для Docker-контейнеров.
+- Dockerfile: Конфигурация для сборки Docker-образа.
 
-/employees/ — для всех сотрудников.
-/employees/{id}/ — для получения, обновления или удаления конкретного сотрудника.
-/tasks/ — для всех задач.
-/tasks/{id}/ — для получения, обновления или удаления конкретной задачи.
+- /employees/ — для всех сотрудников.
+- /employees/{id}/ — для получения, обновления или удаления конкретного сотрудника.
+- /tasks/ — для всех задач.
+- /tasks/{id}/ — для получения, обновления или удаления конкретной задачи.
 
 
 

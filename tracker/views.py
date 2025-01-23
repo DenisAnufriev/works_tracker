@@ -27,16 +27,19 @@ class BusyEmployeesView(APIView):
         Получаем сотрудников, отсортированных по количеству активных задач
         """
         employees = Employee.objects.annotate(
-            active_tasks=Count('tasks', filter=Q(tasks__status='in_progress'))).order_by('-active_tasks')
+            active_tasks=Count("tasks", filter=Q(tasks__status="in_progress"))
+        ).order_by("-active_tasks")
 
         data = []
         for employee in employees:
-            tasks = employee.tasks.filter(status='in_progress')
-            data.append({
-                'employee': employee.full_name,
-                'active_task_count': employee.active_tasks,
-                'tasks': [task.title for task in tasks]
-            })
+            tasks = employee.tasks.filter(status="in_progress")
+            data.append(
+                {
+                    "employee": employee.full_name,
+                    "active_task_count": employee.active_tasks,
+                    "tasks": [task.title for task in tasks],
+                }
+            )
 
         return Response(data)
 
@@ -49,14 +52,18 @@ class ImportantTasksView(APIView):
         """
         Получаем все задачи, которые не взяты в работу, но от которых зависят другие задачи
         """
-        important_tasks = Task.objects.filter(status='pending', parent_task__isnull=False)
+        important_tasks = Task.objects.filter(
+            status="pending", parent_task__isnull=False
+        )
 
         """
         Поиск сотрудников, которые могут взять задачи
         - Сортировка по наименее загруженному сотруднику
         """
-        employees = Employee.objects.annotate(active_tasks=Count('tasks', filter=Q(tasks__status='in_progress')))
-        least_busy_employees = employees.order_by('active_tasks')
+        employees = Employee.objects.annotate(
+            active_tasks=Count("tasks", filter=Q(tasks__status="in_progress"))
+        )
+        least_busy_employees = employees.order_by("active_tasks")
 
         """
         Для каждой важной задачи находим подходящего сотрудника
@@ -65,15 +72,23 @@ class ImportantTasksView(APIView):
         for task in important_tasks:
             potential_employees = []
             for employee in least_busy_employees:
-                if task.parent_task and employee in task.parent_task.subtasks.all() or employee.active_tasks < 3:
+                if (
+                    task.parent_task
+                    and employee in task.parent_task.subtasks.all()
+                    or employee.active_tasks < 3
+                ):
                     potential_employees.append(employee)
 
-            potential_employees_names = [employee.full_name for employee in potential_employees]
+            potential_employees_names = [
+                employee.full_name for employee in potential_employees
+            ]
 
-            task_data.append({
-                'task': task.title,
-                'due_date': task.due_date,
-                'employees': potential_employees_names
-            })
+            task_data.append(
+                {
+                    "task": task.title,
+                    "due_date": task.due_date,
+                    "employees": potential_employees_names,
+                }
+            )
 
         return Response(task_data)
