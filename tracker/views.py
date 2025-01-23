@@ -22,7 +22,9 @@ class BusyEmployeesView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # Получаем сотрудников, отсортированных по количеству активных задач
+        """
+        Получаем сотрудников, отсортированных по количеству активных задач
+        """
         employees = Employee.objects.annotate(
             active_tasks=Count('tasks', filter=Q(tasks__status='in_progress'))).order_by('-active_tasks')
 
