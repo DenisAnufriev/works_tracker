@@ -59,7 +59,7 @@ class TaskSerializer(serializers.ModelSerializer):
             )
         return value
 
-    def validate_self(self, data):
+    def validate_parent_task(self, data):
         if data.get("parent_task") == self.instance:
             raise serializers.ValidationError(
                 "Задача не может быть родительской для самой себя."
