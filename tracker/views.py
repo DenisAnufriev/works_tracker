@@ -40,14 +40,6 @@ class BusyEmployeesView(APIView):
         ]
         return Response(data)
 
-    # def get(self, request):
-    #     employees = Employee.objects.annotate(
-    #         active_tasks=Count("tasks", filter=Q(tasks__status="in_progress"))
-    #     ).order_by("-active_tasks")
-    #
-    #     serializer = EmployeeSerializer(employees, many=True)
-    #     return Response(serializer.data)
-
 
 class ImportantTasksView(APIView):
     permission_classes = [IsAuthenticated]
