@@ -28,20 +28,25 @@ class BusyEmployeesView(APIView):
         """
         employees = Employee.objects.annotate(
             active_tasks=Count("tasks", filter=Q(tasks__status="in_progress"))
-        ).order_by("-active_tasks")
+        ).prefetch_related("tasks").order_by("-active_tasks")
 
-        data = []
-        for employee in employees:
-            tasks = employee.tasks.filter(status="in_progress")
-            data.append(
-                {
-                    "employee": employee.full_name,
-                    "active_task_count": employee.active_tasks,
-                    "tasks": [task.title for task in tasks],
-                }
-            )
-
+        data = [
+            {
+                "employee": employee.full_name,
+                "active_task_count": employee.active_tasks,
+                "tasks": [task.title for task in employee.tasks.filter(status="in_progress")],
+            }
+            for employee in employees
+        ]
         return Response(data)
+
+    # def get(self, request):
+    #     employees = Employee.objects.annotate(
+    #         active_tasks=Count("tasks", filter=Q(tasks__status="in_progress"))
+    #     ).order_by("-active_tasks")
+    #
+    #     serializer = EmployeeSerializer(employees, many=True)
+    #     return Response(serializer.data)
 
 
 class ImportantTasksView(APIView):
@@ -54,34 +59,30 @@ class ImportantTasksView(APIView):
         """
         important_tasks = Task.objects.filter(
             status="pending", parent_task__isnull=False
-        )
+        ).select_related("parent_task", "parent_task__assigned_to")
 
-        """
-        Поиск сотрудников, которые могут взять задачи
-        - Сортировка по наименее загруженному сотруднику
-        """
         employees = Employee.objects.annotate(
             active_tasks=Count("tasks", filter=Q(tasks__status="in_progress"))
-        )
-        least_busy_employees = employees.order_by("active_tasks")
+        ).order_by("active_tasks")
 
-        """
-        Для каждой важной задачи находим подходящего сотрудника
-        """
+        if not important_tasks.exists() or not employees.exists():
+            return Response({"message": "Нет доступных задач или сотрудников"}, status=200)
+
         task_data = []
+        min_active_tasks = employees.first().active_tasks
+
         for task in important_tasks:
             potential_employees = []
-            for employee in least_busy_employees:
+
+            for employee in employees:
                 if (
-                    task.parent_task
-                    and employee in task.parent_task.subtasks.all()
-                    or employee.active_tasks < 3
-                ):
+                        task.parent_task
+                        and task.parent_task.assigned_to == employee
+                        and employee.active_tasks <= min_active_tasks + 2
+                ) or employee.active_tasks == min_active_tasks:
                     potential_employees.append(employee)
 
-            potential_employees_names = [
-                employee.full_name for employee in potential_employees
-            ]
+            potential_employees_names = [employee.full_name for employee in potential_employees]
 
             task_data.append(
                 {
