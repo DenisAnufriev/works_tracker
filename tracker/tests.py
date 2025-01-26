@@ -81,9 +81,10 @@ def test_create_task():
         "title": "Задача 1",
         "status": "pending",
         "assigned_to_id": employee.id,
-        "due_date": "2025-01-01",
+        "due_date": "2025-10-11",
     }
     response = client.post("/tasks/", data, format="json")
     print(response.data)  # Отладочный вывод
     assert response.status_code == status.HTTP_201_CREATED
     assert response.data["title"] == "Задача 1"
+    assert response.data["status"] == "pending"
