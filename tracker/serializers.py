@@ -32,9 +32,10 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    assigned_to = EmployeeSerializer(read_only=True)
+    assigned_to = EmployeeSerializer(read_only=True, required=False)
     assigned_to_id = serializers.PrimaryKeyRelatedField(
-        queryset=Employee.objects.all(), source="assigned_to", write_only=True
+        queryset=Employee.objects.all(), source="assigned_to", write_only=True,
+        required=False
     )
     parent_task = serializers.PrimaryKeyRelatedField(
         queryset=Task.objects.all(), required=False
